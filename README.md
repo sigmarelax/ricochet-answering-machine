@@ -13,19 +13,23 @@ Future features:
 
 ## Warnings
 
-I offer no guarantees that this is tested or will maintain your anonimity.
+I offer no guarantees that this is tested or will maintain your anonymity.
 
 ## How to setup
 
-Install [Go](https://golang.org/doc/install) and [Tor](https://torproject.org/download)
-Configure Tor (to run a hidden service on port 9878 and allow cookie control) by editing torrc
-	For example, run these commands with root in ubuntu:
-		```
-    	echo -e "ControlPort 9051\nCookieAuthentication 1" >> /etc/tor/torrc
-    	echo -e "HiddenServiceDir /var/lib/tor/hidden_service/\nHiddenServicePort 9878 127.0.0.1:9878" >> /etc/tor/torrc
-    	service tor restart
-		chmod 644 /var/run/tor/control.authcookie
-		```
-go get github.com/sigmarelax/ricochetansweringmachine
-[Edit settings for passphrase and admin at the top of main.go]
-go run main.go
+1. Install [Go](https://golang.org/doc/install) and [Tor](https://torproject.org/download)
+
+2. Configure Tor (to run a hidden service on port 9878 and allow cookie control) by editing torrc
+For example, run these commands with root in ubuntu:
+```
+echo -e "ControlPort 9051\nCookieAuthentication 1" >> /etc/tor/torrc
+echo -e "HiddenServiceDir /var/lib/tor/hidden_service/\nHiddenServicePort 9878 127.0.0.1:9878" >> /etc/tor/torrc
+service tor restart
+chmod 644 /var/run/tor/control.authcookie
+```
+
+3. go get github.com/sigmarelax/ricochet-answering-machine
+
+4. Navigate to the source and edit settings for passphrase and admin at the top of main.go
+
+5. go run main.go
