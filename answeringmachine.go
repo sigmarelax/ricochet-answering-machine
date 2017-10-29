@@ -3,6 +3,7 @@ package main
 import (
 	"bufio"
 	"bytes"
+	"crypto/subtle"
 	"fmt"
 	"io"
 	"io/ioutil"
@@ -116,12 +117,7 @@ func main() {
 
 	answeringmachine.OnChatMessage(func(rai *application.RicochetApplicationInstance, id uint32, timestamp time.Time, message string) {
 
-		if message == adminPass {
-			// establish new admin
-			adminID = rai.RemoteHostname
-			rai.SendChatMessage("You are now the Admin! \"/h\" for list of commands")
-
-		} else if rai.RemoteHostname != adminID {
+		if (rai.RemoteHostname != adminID) && (subtle.ConstantTimeCompare([]byte(message), []byte(adminPass)) == 0) {
 			//  format and insert message into slice
 			messageandmeta := fmt.Sprint(rai.RemoteHostname, " [", time.Now().Format("15:04:05 Jan _2 2006"), "]: ", message)
 			rai.SendChatMessage("Sorry," + adminName + " is not available. Your message has been stored in " + adminName + "'s answering machine.")
@@ -132,8 +128,9 @@ func main() {
 			}
 
 		} else if len(message) < 2 {
-			rai.SendChatMessage("Sorry, " + adminName + ".\nThis command is invalid. Please type /h for a list of valid commands.")
-		} else {
+			rai.SendChatMessage("Sorry, " + adminName + ".\nThis command is too short. Please type /h for a list of valid commands.")
+
+		} else if rai.RemoteHostname == adminID {
 			// interpret remote commands
 			switch message[0:2] {
 			case "/m":
@@ -183,6 +180,12 @@ func main() {
 			default:
 				rai.SendChatMessage("Sorry, " + adminName + ".\nThis command is invalid. Please type /h for a list of valid commands.")
 			}
+
+		} else {
+			// establish new admin
+			adminID = rai.RemoteHostname
+			rai.SendChatMessage("You are now the Admin! \"/h\" for list of commands")
+
 		}
 	})
 

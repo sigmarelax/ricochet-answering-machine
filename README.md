@@ -31,6 +31,6 @@ chmod 644 /var/run/tor/control.authcookie
 
 3. go get github.com/sigmarelax/ricochet-answering-machine
 
-4. Navigate to the source and edit settings for passphrase and admin at the top of main.go
+4. Navigate to the source and edit settings for passphrase and admin at the top of answeringmachine.go
 
-5. go run main.go
+5. go run answeringmachine.go
