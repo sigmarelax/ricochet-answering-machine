@@ -117,14 +117,20 @@ func main() {
 
 	answeringmachine.OnChatMessage(func(rai *application.RicochetApplicationInstance, id uint32, timestamp time.Time, message string) {
 
-		if (rai.RemoteHostname != adminID) && (subtle.ConstantTimeCompare([]byte(message), []byte(adminPass)) == 0) {
-			//  format and insert message into slice
-			messageandmeta := fmt.Sprint(rai.RemoteHostname, " [", time.Now().Format("15:04:05 Jan _2 2006"), "]: ", message)
-			rai.SendChatMessage("Sorry," + adminName + " is not available. Your message has been stored in " + adminName + "'s answering machine.")
-			voicemails = append(voicemails, messageandmeta)
-			err = writestate(voicemails)
-			if err != nil {
-				log.Printf("Error saving Answering Machine state: %v", err)
+		if rai.RemoteHostname != adminID {
+			if subtle.ConstantTimeCompare([]byte(message), []byte(adminPass)) == 0 {
+				//  format and insert message into slice
+				messageandmeta := fmt.Sprint(rai.RemoteHostname, " [", time.Now().Format("15:04:05 Jan _2 2006"), "]: ", message)
+				rai.SendChatMessage("Sorry," + adminName + " is not available. Your message has been stored in " + adminName + "'s answering machine.")
+				voicemails = append(voicemails, messageandmeta)
+				err = writestate(voicemails)
+				if err != nil {
+					log.Printf("Error saving Answering Machine state: %v", err)
+				}
+			} else {
+				// establish new admin
+				adminID = rai.RemoteHostname
+				rai.SendChatMessage("You are now the Admin! \"/h\" for list of commands")
 			}
 
 		} else if len(message) < 2 {
@@ -153,7 +159,9 @@ func main() {
 					rai.SendChatMessage("No deleted message found.")
 					break
 				}
+
 				voicemails = append(voicemails, deletedvoicemail)
+
 				err = writestate(voicemails)
 				if err != nil {
 					log.Printf("Error saving Answering Machine state: %v", err)
@@ -169,23 +177,17 @@ func main() {
 				rai.SendChatMessage("Goodbye.")
 				os.Exit(0)
 
+			case "/p":
+				rai.SendChatMessage("New password: " + message[3:])
+				adminPass = message[3:]
+
 			case "/h":
 				// help
 				rai.SendChatMessage("/m will play the oldest message.\n/k will undelete and keep the last played message.\n/n will list how many messages exist.\n/p will set a new password.\n/q will turn off the answering machine.")
 
-			case "/p":
-				rai.SendChatMessage("New password: " + message[2:])
-				adminPass = message[2:]
-
 			default:
 				rai.SendChatMessage("Sorry, " + adminName + ".\nThis command is invalid. Please type /h for a list of valid commands.")
 			}
-
-		} else {
-			// establish new admin
-			adminID = rai.RemoteHostname
-			rai.SendChatMessage("You are now the Admin! \"/h\" for list of commands")
-
 		}
 	})
 
