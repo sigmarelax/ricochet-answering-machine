@@ -1,6 +1,8 @@
-# Ricochet Answering Machine
+# Ricochet Answering Machine [![Go Report Card](https://goreportcard.com/badge/github.com/sigmarelax/ricochet-answering-machine)](https://goreportcard.com/report/github.com/sigmarelax/ricochet-answering-machine)
 
 This project runs a [Ricochet IM](https://ricochet.im) bot that will receive/store/retrieve missed messages, much like a telephone answering machine. This is built using [GoRicochet](https://github.com/s-rah/go-ricochet) (an experimental implementation of the Ricochet Protocol in Go).
+
+[![baby-gopher](https://raw.githubusercontent.com/drnic/babygopher-site/gh-pages/images/babygopher-badge.png)](http://www.babygopher.org)
 
 ## Features
 
